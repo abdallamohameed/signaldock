@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>SignalDock Triage</title>
+</head>
+
+<body>
+
+<h1>SignalDock Triage Console</h1>
+
+<button onclick="loadSignals()">
+    Refresh
+</button>
+
+<div id="signals"></div>
+
+<script>
+
+const API_BASE =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3001"
+    : "";
+
+
+async function loadSignals() {
+
+    const response =
+        await fetch(`${API_BASE}/api/signals`);
+
+    const signals =
+        await response.json();
+
+    const container =
+        document.getElementById("signals");
+
+    container.innerHTML = "";
+
+    signals.forEach(signal => {
+
+        const item =
+            document.createElement("div");
+
+        item.innerHTML = `
+
+            <hr>
+
+            <strong>${signal.value}</strong>
+
+            <p>
+                Type: ${signal.type}
+            </p>
+
+            <p>
+                Severity: ${signal.severity}
+            </p>
+
+            <p>
+                Status: ${signal.status}
+            </p>
+
+            <button
+                onclick="updateStatus(
+                    '${signal.id}',
+                    'investigating'
+                )">
+
+                Investigating
+
+            </button>
+
+            <button
+                onclick="updateStatus(
+                    '${signal.id}',
+                    'closed'
+                )">
+
+                Close
+
+            </button>
+
+        `;
+
+        container.appendChild(item);
+
+    });
+
+}
+
+
+async function updateStatus(id, status) {
+
+    await fetch(
+        `${API_BASE}/api/signals/${id}`,
+        {
+
+            method: "PATCH",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                status
+            })
+        }
+    );
+
+    loadSignals();
+
+}
+
+
+loadSignals();
+
+</script>
+
+</body>
+</html>

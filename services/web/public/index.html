@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SignalDock</title>
+</head>
+
+<body>
+
+<h1>SignalDock</h1>
+<p>Indicator Intake Portal</p>
+
+<form id="signalForm">
+
+    <label>Indicator</label>
+    <input id="value"
+           placeholder="suspicious.example.com"
+           required>
+
+    <br><br>
+
+    <label>Type</label>
+
+    <select id="type">
+        <option>domain</option>
+        <option>ip</option>
+        <option>url</option>
+        <option>hash</option>
+    </select>
+
+    <br><br>
+
+    <label>Severity</label>
+
+    <select id="severity">
+        <option>low</option>
+        <option>medium</option>
+        <option>high</option>
+        <option>critical</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Submit Indicator</button>
+
+</form>
+
+<p id="result"></p>
+
+<script>
+
+const API_BASE =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3001"
+    : "";
+
+document
+    .getElementById("signalForm")
+    .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const response = await fetch(`${API_BASE}/api/signals`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                value:
+                    document.getElementById("value").value,
+
+                type:
+                    document.getElementById("type").value,
+
+                severity:
+                    document.getElementById("severity").value
+            })
+        });
+
+        const data = await response.json();
+
+        document.getElementById("result").innerText =
+            `Created: ${data.id}`;
+
+    });
+
+</script>
+
+</body>
+</html>
