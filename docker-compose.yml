@@ -1,0 +1,45 @@
+services:
+
+  web:
+    build:
+      context: ./services/web
+
+    container_name: signaldock-web
+
+    environment:
+      PORT: 8080
+
+    ports:
+      - "3000:8080"
+
+    restart: unless-stopped
+
+
+  api:
+    build:
+      context: ./services/api
+
+    container_name: signaldock-api
+
+    environment:
+      PORT: 8081
+
+    ports:
+      - "3001:8081"
+
+    restart: unless-stopped
+
+
+  triage:
+    build:
+      context: ./services/triage
+
+    container_name: signaldock-triage
+
+    environment:
+      PORT: 8082
+
+    ports:
+      - "3002:8082"
+
+    restart: unless-stopped
